@@ -1,5 +1,5 @@
 # advent-of-code
-Solutions to adventofcode.com
+Solutions to https://adventofcode.com
 
 Don't look at this repo if you don't want spoilers.
 
