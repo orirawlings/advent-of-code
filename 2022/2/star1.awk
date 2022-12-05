@@ -29,22 +29,19 @@
 #
 
 BEGIN {
-	score["X"]=1
-	score["Y"]=2
-	score["Z"]=3
-	score["A","Z"]=0
-	score["B","X"]=0
-	score["C","Y"]=0
-	score["A","X"]=3
-	score["B","Y"]=3
-	score["C","Z"]=3
-	score["A","Y"]=6
-	score["B","Z"]=6
-	score["C","X"]=6
+	score["A","Z"]=3+0
+	score["B","X"]=1+0
+	score["C","Y"]=2+0
+	score["A","X"]=1+3
+	score["B","Y"]=2+3
+	score["C","Z"]=3+3
+	score["A","Y"]=2+6
+	score["B","Z"]=3+6
+	score["C","X"]=1+6
 }
 
 {
-	s+=score[$2]+score[$1,$2]
+	s+=score[$1,$2]
 }
 
 END {

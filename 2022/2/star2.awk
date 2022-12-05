@@ -13,22 +13,19 @@
 # Following the Elf's instructions for the second column, what would your total score be if everything goes exactly according to your strategy guide?
 
 BEGIN {
-	score["X"]=0
-	score["Y"]=3
-	score["Z"]=6
-	score["A","X"]=3 # rock beats scissors
-	score["A","Y"]=1 # rock draws rock
-	score["A","Z"]=2 # rock loses to paper
-	score["B","X"]=1 # paper beats rock
-	score["B","Y"]=2 # paper draws paper
-	score["B","Z"]=3 # paper loses to scissors
-	score["C","X"]=2 # scissors beats paper
-	score["C","Y"]=3 # scissors draws scissors
-	score["C","Z"]=1 # scissors loses to rock
+	score["A","X"]=3+0 # rock beats scissors
+	score["A","Y"]=1+3 # rock draws rock
+	score["A","Z"]=2+6 # rock loses to paper
+	score["B","X"]=1+0 # paper beats rock
+	score["B","Y"]=2+3 # paper draws paper
+	score["B","Z"]=3+6 # paper loses to scissors
+	score["C","X"]=2+0 # scissors beats paper
+	score["C","Y"]=3+3 # scissors draws scissors
+	score["C","Z"]=1+6 # scissors loses to rock
 }
 
 {
-	s+=score[$2]+score[$1,$2]
+	s+=score[$1,$2]
 }
 
 END {
