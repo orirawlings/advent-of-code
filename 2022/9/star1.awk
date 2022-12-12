@@ -241,6 +241,13 @@
 # 
 # Simulate your complete hypothetical series of motions. How many positions does the tail of the rope visit at least once?
 
+function abs(n) {
+	if (n<0) {
+		return -n
+	}
+	return n
+}
+
 function visit(x, y) {
 	x+=0
 	y+=0
@@ -248,53 +255,76 @@ function visit(x, y) {
 		visited[x,y]=1
 		count+=1
 	}
+	if (debug) {
+		if (x<minX) {
+			minX=x
+		}
+		if (x>maxX) {
+			maxX=x
+		}
+		if (y<minY) {
+			minY=y
+		}
+		if (y>maxY) {
+			maxY=y
+		}
+	}
 }
 
 BEGIN {
 	visit(tailX,tailY)
 }
 
-$1=="R" {
+{
+	xDelta=0
+	yDelta=0
+	if ($1=="R") {
+		xDelta=1
+	}
+	if ($1=="L") {
+		xDelta=-1
+	}
+	if ($1=="U") {
+		yDelta=1
+	}
+	if ($1=="D") {
+		yDelta=-1
+	}
 	for (i=1;i<=$2;i++) {
-		headX+=1
-		if (headX-tailX==2) {
-			tailX=headX-1
-			tailY=headY
+		headX+=xDelta
+		headY+=yDelta
+		xDist=headX-tailX
+		yDist=headY-tailY
+		if (abs(xDist)==2||abs(yDist)==2) {
+			if (xDist) {
+				tailX+=xDist/abs(xDist)
+			}
+			if (yDist) {
+				tailY+=yDist/abs(yDist)
+			}
 		}
 		visit(tailX,tailY)
 	}
 }
 
-$1=="L" {
-	for (i=1;i<=$2;i++) {
-		headX-=1
-		if (tailX-headX==2) {
-			tailX=headX+1
-			tailY=headY
+debug {
+	# Display state
+	print
+	for (i=maxY+1;i>=minY-1;i--) {
+		for (j=minX-1;j<=maxX+1;j++) {
+			c="."
+			if (visited[j,i]) {
+				c="#"
+			}
+			if (j==tailX && i==tailY) {
+				c="T"
+			}
+			if (j==headX && i==headY) {
+				c="H"
+			}
+			printf(c)
 		}
-		visit(tailX,tailY)
-	}
-}
-
-$1=="U" {
-	for (i=1;i<=$2;i++) {
-		headY+=1
-		if (headY-tailY==2) {
-			tailX=headX
-			tailY=headY-1
-		}
-		visit(tailX,tailY)
-	}
-}
-
-$1=="D" {
-	for (i=1;i<=$2;i++) {
-		headY-=1
-		if (tailY-headY==2) {
-			tailX=headX
-			tailY=headY+1
-		}
-		visit(tailX,tailY)
+		print ""
 	}
 }
 

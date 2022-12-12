@@ -431,6 +431,13 @@
 # .........########.........
 # Simulate your complete series of motions on a larger rope with ten knots. How many positions does the tail of the rope visit at least once?
 
+function abs(n) {
+	if (n<0) {
+		return -n
+	}
+	return n
+}
+
 function visit(x, y) {
 	x+=0
 	y+=0
@@ -455,55 +462,6 @@ function visit(x, y) {
 }
 
 BEGIN {
-	# right
-	movesX[ 1, 0, 1,-1]= 1; movesY[ 1, 0, 1,-1]=-1
-	movesX[ 1, 0, 1, 0]= 1; movesY[ 1, 0, 1, 0]= 0
-	movesX[ 1, 0, 1, 1]= 1; movesY[ 1, 0, 1, 1]= 1
-
-	# left
-	movesX[-1, 0,-1,-1]=-1; movesY[-1, 0,-1,-1]=-1
-	movesX[-1, 0,-1, 0]=-1; movesY[-1, 0,-1, 0]= 0
-	movesX[-1, 0,-1, 1]=-1; movesY[-1, 0,-1, 1]= 1
-
-	# up
-	movesX[ 0, 1, 1, 1]= 1; movesY[ 0, 1, 1, 1]= 1
-	movesX[ 0, 1, 0, 1]= 0; movesY[ 0, 1, 0, 1]= 1
-	movesX[ 0, 1,-1, 1]=-1; movesY[ 0, 1,-1, 1]= 1
-
-	# down
-	movesX[ 0,-1, 1,-1]= 1; movesY[ 0,-1, 1,-1]=-1
-	movesX[ 0,-1, 0,-1]= 0; movesY[ 0,-1, 0,-1]=-1
-	movesX[ 0,-1,-1,-1]=-1; movesY[ 0,-1,-1,-1]=-1
-
-
-	# right, up
-	movesX[ 1, 1, 1,-1]= 1; movesY[ 1, 1, 1,-1]= 0
-	movesX[ 1, 1, 1, 0]= 1; movesY[ 1, 1, 1, 0]= 1
-	movesX[ 1, 1, 1, 1]= 1; movesY[ 1, 1, 1, 1]= 1
-	movesX[ 1, 1, 0, 1]= 1; movesY[ 1, 1, 0, 1]= 1
-	movesX[ 1, 1,-1, 1]= 0; movesY[ 1, 1,-1, 1]= 1
-
-	# right, down
-	movesX[ 1,-1,-1,-1]= 0; movesY[ 1,-1,-1,-1]=-1
-	movesX[ 1,-1, 0,-1]= 1; movesY[ 1,-1, 0,-1]=-1
-	movesX[ 1,-1, 1,-1]= 1; movesY[ 1,-1, 1,-1]=-1
-	movesX[ 1,-1, 1, 0]= 1; movesY[ 1,-1, 1, 0]=-1
-	movesX[ 1,-1, 1, 1]= 1; movesY[ 1,-1, 1, 1]= 0
-
-	# left, down
-	movesX[-1,-1,-1, 1]=-1; movesY[-1,-1,-1, 1]= 0
-	movesX[-1,-1,-1, 0]=-1; movesY[-1,-1,-1, 0]=-1
-	movesX[-1,-1,-1,-1]=-1; movesY[-1,-1,-1,-1]=-1
-	movesX[-1,-1, 0,-1]=-1; movesY[-1,-1, 0,-1]=-1
-	movesX[-1,-1, 1,-1]= 0; movesY[-1,-1, 1,-1]=-1
-
-	# left, up
-	movesX[-1, 1, 1, 1]= 0; movesY[-1, 1, 1, 1]= 1
-	movesX[-1, 1, 0, 1]=-1; movesY[-1, 1, 0, 1]= 1
-	movesX[-1, 1,-1, 1]=-1; movesY[-1, 1,-1, 1]= 1
-	movesX[-1, 1,-1, 0]=-1; movesY[-1, 1,-1, 0]= 1
-	movesX[-1, 1,-1,-1]=-1; movesY[-1, 1,-1,-1]= 0
-	
 	knots=10
 	for (k=1;k<=knots;k++) {
 		x[k]=0
@@ -513,19 +471,27 @@ BEGIN {
 }
 
 function move(k, xDelta, yDelta) {
-	xDelta+=0
-	yDelta+=0
 	if (!xDelta && !yDelta) {
 		return
 	}
-	linkX=x[k]-x[k+1]
-	linkY=y[k]-y[k+1]
 	x[k]+=xDelta
 	y[k]+=yDelta
 	if (k==knots) {
 		return
 	}
-	move(k+1,movesX[xDelta,yDelta,linkX,linkY],movesY[xDelta,yDelta,linkX,linkY])
+	xDist=x[k]-x[k+1]
+	yDist=y[k]-y[k+1]
+	if (abs(xDist)==2||abs(yDist)==2) {
+		xDelta=0
+		yDelta=0
+		if (xDist) {
+			xDelta=xDist/abs(xDist)
+		}
+		if (yDist) {
+			yDelta=yDist/abs(yDist)
+		}
+		move(k+1,xDelta,yDelta)
+	}
 }
 
 {
